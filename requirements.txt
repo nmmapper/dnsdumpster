@@ -1,0 +1,5 @@
+requests
+dnspython
+simplejson
+ip2geotools
+ipwhois
