@@ -1,10 +1,10 @@
 # dnsdumpster
 A tool to perform DNS reconnaissance on target networks. The results include a variety of information that are useful for users performing network reconnaissance.
 Some of the information return include
- * Host subdomains
+ * [Host subdomains](https://www.nmmapper.com/sys/tools/subdomainfinder/)
  * Different dns informat(MX, A record)
  * Geo information
- * Email
+ * [Email](https://www.nmmapper.com/kalitools/theharvester/email-harvester-tool/online/)
 
 # Dependencies 
  * requests
