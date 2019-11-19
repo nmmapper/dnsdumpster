@@ -42,6 +42,8 @@ except ImportError:
     import json 
 from geolocator.geo import (query_A_records, geo_locate_ip, locate_asn_info
 )
+from geolocator.mxfinder import (query_host_mx, query_host_ns
+)
 
 def subdomain_sorting_key(hostname):
     """Sorting key for subdomains
@@ -816,29 +818,34 @@ def main(domain):
         subdomains = clean_domains(sorted(subdomains, key=subdomain_sorting_key))
     
     # Dict data
-    dns_dumped = []
+    subdomain_list = []
+    dnsrecords = dict()
+    
     for sub in subdomains:
         a_record = query_A_records(sub)
         if(a_record):
             A = a_record[0]
             d = {
-                "domain":domain,
                 "subdomain":sub,
                 "subdomain_ip":A.address,
                 "geo":geo_locate_ip(A.address),
                 "asn":locate_asn_info(A.address),
             }
-            dns_dumped.append(d)
+            subdomain_list.append(d)
         else:
             d = {
-                "domain":domain,
                 "subdomain":sub,
                 "subdomain_ip":"",
                 "geo":geo_locate_ip(sub),
                 "asn":locate_asn_info(sub)
             }
-            dns_dumped.append(d)
-    return dns_dumped
+            subdomain_list.append(d)
+    
+    dnsrecords["host"]=domain
+    dnsrecords["mx"]=query_host_mx(domain)
+    dnsrecords["ns"]=query_host_ns(domain)
+    dnsrecords["subdomains"]=subdomain_list
+    return dnsrecords
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(prog="Module to dump all dns records of a given domain")

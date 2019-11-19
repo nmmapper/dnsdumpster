@@ -28,7 +28,8 @@ try:
     import simplejson as json
 except ImportError:
     import json
-    
+import dns
+
 def query_A_records(hostname, query_type="A"):
     """
     @
@@ -39,6 +40,8 @@ def query_A_records(hostname, query_type="A"):
         return query
     except NXDOMAIN as e:
         return None
+    except dns.exception.Timeout:
+        return ""
         
 def geo_locate_ip(ip):
     """
