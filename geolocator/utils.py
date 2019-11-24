@@ -20,6 +20,7 @@
 #  
 import requests
 import random 
+from wafw00f.main import WafW00F
 
 def get_user_agent() -> str:
     user_agents = [
@@ -280,6 +281,21 @@ def get_server_type(host):
         else:
             return ""
             
+    except Exception as e:
+        return ""
+        
+def detect_waf(host):
+    """
+    :param host: Detect if the host is behind web application firewall
+    @return str
+    """
+    try:
+        detector = WafW00F(host)
+        waf = detector.identwaf()
+        if(waf):
+           return waf[0]
+        else:
+            return ""
     except Exception as e:
         print(e)
         return ""

@@ -295,3 +295,61 @@ Searching using engine SSL Certificates
     }
 ]
 ```
+
+There is support for web application firewall detection. When all subdomains have been enumerated we detect if each of the subdomain is behind a web application firewall. To detect web application firewalls we use [WAFW00F](https://github.com/EnableSecurity/wafw00f) by [Enable Security](http://enablesecurity.com/)
+```py
+from wafw00f.main import WafW00F
+detector = WafW00F(host)
+waf = detector.identwaf()
+if(waf):
+    return waf[0]
+else:
+    return ""
+```
+```sh
+{
+            "asn": {
+                "asn": "13335",
+                "asn_cidr": "104.27.160.0/20",
+                "asn_country_code": "US",
+                "asn_date": "2014-03-28",
+                "asn_description": "CLOUDFLARENET - Cloudflare, Inc., US",
+                "asn_registry": "arin"
+            },
+            "geo": {
+                "city": "Ashburn",
+                "country": "US",
+                "ip_address": "104.27.171.116",
+                "latitude": 39.0437192,
+                "longitude": -77.4874899,
+                "region": "Virginia"
+            },
+            "server": "cloudflare",
+            "subdomain": "mail.mp3hunter.net",
+            "subdomain_ip": "104.27.171.116",
+            "waf": "Cloudflare (Cloudflare Inc.)"
+        },
+
+```
+Web server detection, the tool also supports web server detection on both the main domain and the subdomains that have been enumerated. Here is a piece of code that does the detection
+```py
+def get_server_type(host):
+    """
+    :param host: the server we want to get it's server
+    @return str
+    """
+    try:
+        ua = get_user_agent()
+        headers = {
+            'User-Agent': ua,
+            'From': 'info@nmmapper.com' 
+        }
+        res  = requests.get(add_protocol(host), headers=headers)
+        if(res.headers):
+            return res.headers.get("Server")
+        else:
+            return ""
+            
+    except Exception as e:
+        return ""
+```
