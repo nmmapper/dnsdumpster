@@ -1,55 +1,34 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# This file only contains a selection of the most common options. For a full
-# list see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
+.. dnsdumpster documentation master file, created by
+   sphinx-quickstart on Wed Dec  4 21:20:48 2019.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
 
-# -- Path setup --------------------------------------------------------------
+Welcome to dnsdumpster's simple documentation!
+==============================================
 
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
 
 
-# -- Project information -----------------------------------------------------
+Home page
+=========
+* `https://www.nmmapper.com <https://www.nmmapper.com>`_
 
-project = 'dnsdumpster'
-copyright = '2019, Wangolo Joel'
-author = 'Wangolo Joel'
+Repository and source code
+==========================
+* `https://github.com/wangoloj/dnsdumpster <https://github.com/wangoloj/dnsdumpster>`_
 
+Rationale
+=========
+There are many projects out there that both in github and online that offer dns manage and dumping of dns data. But we at `https://www.nmmapper.com <https://www.nmmapper.com>`_ wanted to unify lot of python tools out there that perform dns recon so that we can host it online. Like we did unify and host `8 subdomain finder tools <https://www.nmmapper.com/sys/tools/subdomainfinder/>`_.
 
-# -- General configuration ---------------------------------------------------
-
-# Add any Sphinx extension module names here, as strings. They can be
-# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
-# ones.
-extensions = [
-]
-
-# Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
-
-# List of patterns, relative to source directory, that match files and
-# directories to ignore when looking for source files.
-# This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
+Our approach to this tool is to dump as match information about a given host as possible. The tool is still in development and we continue to add more features on it.
 
 
-# -- Options for HTML output -------------------------------------------------
+Indices and tables
+==================
 
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-#
-html_theme = 'alabaster'
-
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
-
-#-----PERSONAL----
-master_doc = 'index'
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
