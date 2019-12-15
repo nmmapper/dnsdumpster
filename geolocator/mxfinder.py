@@ -33,7 +33,9 @@ def query_host_mx(hostname, rt="MX"):
         mx = resolver.query(hostname, rt)
         
     except NXDOMAIN as e:
-        return None
+        return []
+    except dns.resolver.NoAnswer:
+        return []
     else:
         mx = mx[0]
         return str(mx.exchange)
@@ -43,7 +45,9 @@ def query_host_ns(hostname, rt="NS"):
         resolver  = Resolver()
         ns = resolver.query(hostname, rt)
     except NXDOMAIN as e:
-        return None
+        return []
+    except dns.resolver.NoAnswer:
+        return []
     else:
         ns_list = []
         
