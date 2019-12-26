@@ -42,7 +42,7 @@ except ImportError:
     import json 
 from geolocator.geo import (query_A_records, geo_locate_ip, locate_asn_info
 )
-from geolocator.mxfinder import (query_host_mx, query_host_ns
+from geolocator.mxfinder import (query_host_mx, query_host_ns, query_host_txt
 )
 from geolocator.utils import get_server_type, detect_waf
 import searchparser
@@ -834,7 +834,9 @@ def main(domain):
     dnsrecords["waf"]=detect_waf(domain)
     dnsrecords["mx"]=query_host_mx(domain)
     dnsrecords["ns"]=query_host_ns(domain)
+    dnsrecords["asn"]=locate_asn_info(domain)
     dnsrecords["subdomains"]=subdomain_list
+    dnsrecords["txt"]=query_host_txt(domain)
     return dnsrecords
 
 if __name__=="__main__":

@@ -27,6 +27,27 @@ except ImportError:
     import json
 from .geo import query_A_records
 
+def query_host_txt(hostname, rt="TXT"):
+    """
+    Return the text records of a given 
+    host
+    """
+    try:
+        txt_records = []
+        
+        resolver  = Resolver()
+        txt = resolver.query(hostname, "TXT")
+        rrset = txt.rrset
+        
+        for items in rrset.items:
+            txt_records.append(str(items))
+        return txt_records
+        
+    except NXDOMAIN as e:
+        return []
+    except dns.resolver.NoAnswer:
+        return []
+        
 def query_host_mx(hostname, rt="MX"):
     try:
         resolver  = Resolver()
