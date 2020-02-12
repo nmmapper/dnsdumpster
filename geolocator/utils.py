@@ -20,7 +20,7 @@
 #  
 import requests
 import random 
-from wafw00f.main import WafW00F
+#from wafw00f import main 
 
 def get_user_agent() -> str:
     user_agents = [
@@ -290,7 +290,7 @@ def detect_waf(host):
     @return str
     """
     try:
-        detector = WafW00F(host)
+        detector = main.WAFW00F(host)
         waf = detector.identwaf()
         if(waf):
            return waf[0]

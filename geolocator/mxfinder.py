@@ -26,6 +26,7 @@ try:
 except ImportError:
     import json
 from .geo import query_A_records
+from .utils import add_protocol
 
 def query_host_txt(hostname, rt="TXT"):
     """
@@ -45,17 +46,21 @@ def query_host_txt(hostname, rt="TXT"):
         
     except NXDOMAIN as e:
         return []
+    except dns.exception.Timeout:
+        return []
     except dns.resolver.NoAnswer:
         return []
         
 def query_host_mx(hostname, rt="MX"):
     try:
         resolver  = Resolver()
-        mx = resolver.query(hostname, rt)
+        mx = resolver.query(add_protocol(hostname), rt)
         
     except NXDOMAIN as e:
         return []
     except dns.resolver.NoAnswer:
+        return []
+    except dns.exception.Timeout:
         return []
     else:
         mx = mx[0]
@@ -68,6 +73,8 @@ def query_host_ns(hostname, rt="NS"):
     except NXDOMAIN as e:
         return []
     except dns.resolver.NoAnswer:
+        return []
+    except dns.exception.Timeout:
         return []
     else:
         ns_list = []
