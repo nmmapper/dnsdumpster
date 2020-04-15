@@ -4,3 +4,4 @@ simplejson
 ip2geotools
 ipwhois
 wafw00f
+graphviz
