@@ -1,10 +1,17 @@
+.. meta::
+    :description lang=en:
+        A tool to perform DNS reconnaissance on target networks. Among the DNS information 
+        got from include subdomains, mx records, web application firewall can let you 
+        customize the look and feel of your docs or add additional 
+
+functionality.
 .. dnsdumpster documentation master file, created by
    sphinx-quickstart on Wed Dec  4 21:20:48 2019.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to dnsdumpster's simple documentation!
-==============================================
+Dnsdumpster a tool to perform DNS, MX, NS Lookup
+=================================================
 
 .. toctree::
    :maxdepth: 2

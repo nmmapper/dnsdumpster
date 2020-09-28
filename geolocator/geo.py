@@ -42,6 +42,8 @@ def query_A_records(hostname, query_type="A"):
         return None
     except dns.exception.Timeout:
         return ""
+    except dns.resolver.NoAnswer:
+        return ""
         
 def geo_locate_ip(ip):
     """
