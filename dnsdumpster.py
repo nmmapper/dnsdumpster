@@ -198,8 +198,11 @@ class EnumratorBaseThreaded(multiprocessing.Process, EnumratorBase):
 
     def run(self):
         domain_list = self.enumerate()
-        for domain in domain_list:
-            self.q.append(domain)
+        if isinstance(domain_list, list):
+            for domain in domain_list:
+                self.q.append(domain)
+        else:
+            print(f"domain_list is missing for engine {self.engine_name}")
 
 class GoogleEnum(EnumratorBaseThreaded):
     def __init__(self, domain, subdomains=None, q=None):
@@ -446,7 +449,7 @@ class BaiduEnum(EnumratorBaseThreaded):
 class NetcraftEnum(EnumratorBaseThreaded):
     def __init__(self, domain, subdomains=None, q=None):
         subdomains = subdomains or []
-        self.base_url = 'https://searchdns.netcraft.com/?restriction=site+ends+with&host={domain}'
+        self.base_url = 'https://searchdns.netcraft.com/?restriction=site+ends+with&host={domain}&position=limited'
         self.engine_name = "Netcraft"
         self.lock = threading.Lock()
         super(NetcraftEnum, self).__init__(self.base_url, self.engine_name, domain, subdomains, q=q)
@@ -487,12 +490,13 @@ class NetcraftEnum(EnumratorBaseThreaded):
     def enumerate(self):
         start_url = self.base_url.format(domain='example.com')
         resp = self.req(start_url)
-        if(resp):
+        if resp.status_code:
             cookies = self.get_cookies(resp.headers)
             url = self.base_url.format(domain=self.domain)
             while True:
-                resp = self.get_response(self.req(url, cookies))
-                self.extract_domains(resp)
+                resp = self.req(url, cookies)
+                respText = self.get_response(resp)
+                self.extract_domains(respText)
                 if(isinstance(resp, int)):
                     break
                 if 'Next page' not in resp:
@@ -780,7 +784,7 @@ def main(domain):
                          'ssl': CrtSearch,
                          'passivedns': PassiveDNS
                          }
-
+    
     engines = [
         #BaiduEnum, YahooEnum, GoogleEnum, BingEnum, AskEnum,
         DNSdumpster,
