@@ -590,7 +590,7 @@ class Virustotal(EnumratorBaseThreaded):
         subdomains = subdomains or []
         base_url = "https://www.virustotal.com/gui/domain/{domain}/details"
         self.apiurl = 'https://www.virustotal.com/vtapi/v2/domain/report'
-        self.API_KEY="efdf4846c4464ed7d07d432774add91f848931f0214c54660177a20cb1003f84"
+        self.API_KEY=""
         self.params =  {'apikey':self.API_KEY,'domain':domain}
         self.engine_name = "Virustotal"
         self.lock = threading.Lock()
