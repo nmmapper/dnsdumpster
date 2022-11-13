@@ -188,7 +188,7 @@ class EnumratorBase(object):
         return self.subdomains
 
 class EnumratorBaseThreaded(multiprocessing.Process, EnumratorBase):
-    def __init__(self, base_url, engine_name, domain, subdomains=None, q=None, lock=threading.Lock()):
+    def __init__(self, base_url, engine_name, domain, subdomains=None, q=None, lock=multiprocessing.Lock()):
         subdomains = subdomains or []
         EnumratorBase.__init__(self, base_url, engine_name, domain, subdomains)
         multiprocessing.Process.__init__(self)
@@ -451,7 +451,7 @@ class NetcraftEnum(EnumratorBaseThreaded):
         subdomains = subdomains or []
         self.base_url = 'https://searchdns.netcraft.com/?restriction=site+ends+with&host={domain}&position=limited'
         self.engine_name = "Netcraft"
-        self.lock = threading.Lock()
+        self.lock = multiprocessing.Lock()
         super(NetcraftEnum, self).__init__(self.base_url, self.engine_name, domain, subdomains, q=q)
         self.q = q
         return
@@ -593,7 +593,7 @@ class Virustotal(EnumratorBaseThreaded):
         self.API_KEY=""
         self.params =  {'apikey':self.API_KEY,'domain':domain}
         self.engine_name = "Virustotal"
-        self.lock = threading.Lock()
+        self.lock = multiprocessing.Lock()
         self.q = q
         super(Virustotal, self).__init__(base_url, self.engine_name, domain, subdomains, q=q)
         return
@@ -631,7 +631,7 @@ class ThreatCrowd(EnumratorBaseThreaded):
         self.domain = domain 
         self.queryurl = 'https://www.threatcrowd.org/searchApi/v2/domain/report/?domain={0}'.format(self.domain)
         self.engine_name = "ThreatCrowd"
-        self.lock = threading.Lock()
+        self.lock = multiprocessing.Lock()
         self.q = q
         super(ThreatCrowd, self).__init__(base_url, self.engine_name, domain, subdomains, q=q)
         return
@@ -671,7 +671,7 @@ class CrtSearch(EnumratorBaseThreaded):
         self.domain = domain
         self.queryurl = 'https://crt.sh/?q={0}&output=json'.format(self.domain)
         self.engine_name = "SSL Certificates"
-        self.lock = threading.Lock()
+        self.lock = multiprocessing.Lock()
         self.q = q
         super(CrtSearch, self).__init__(base_url, self.engine_name, domain, subdomains, q=q)
         return
@@ -718,7 +718,7 @@ class PassiveDNS(EnumratorBaseThreaded):
         subdomains = subdomains or []
         base_url = 'https://api.sublist3r.com/search.php?domain={domain}'
         self.engine_name = "PassiveDNS"
-        self.lock = threading.Lock()
+        self.lock = multiprocessing.Lock()
         self.q = q
         super(PassiveDNS, self).__init__(base_url, self.engine_name, domain, subdomains, q=q)
         return
