@@ -83,7 +83,7 @@ class EnumratorBase(object):
         self.base_url = base_url
         self.engine_name = engine_name
         self.headers = {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0',
               'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
               'Accept-Language': 'en-US,en;q=0.8',
               'Accept-Encoding': 'gzip',
@@ -527,9 +527,7 @@ class DNSdumpster(EnumratorBaseThreaded):
         self.live_subdomains = []
         self.engine_name = "DNSdumpster"
         self.threads = 70
-                
         self.domain = domain.replace(' ', '%20')
-        
         self.results = ""
         self.totalresults = ""
         self.server = 'dnsdumpster.com'
@@ -559,13 +557,13 @@ class DNSdumpster(EnumratorBaseThreaded):
                     break
                 csrftoken += ch
             data = {
-                'Cookie': f'csfrtoken={csrftoken}', 'csrfmiddlewaretoken': csrftoken, 'targetip': self.targetdomain}
+                'user': 'free', 'csrfmiddlewaretoken': csrftoken, 'targetip': self.targetdomain}
             headers['Referer'] = url
             post_req = session.post(url, headers=headers, data=data)
             self.results = post_req.text
             
         except Exception as e:
-            print(f'An exception occured: {e}')
+            print('[DNSdumpster] ERROR {e}'.format(e=str(e)))
         self.totalresults += self.results
 
     def extract_domains(self):
@@ -579,12 +577,6 @@ class DNSdumpster(EnumratorBaseThreaded):
         self.extract_domains() 
         return self.subdomains 
         
-    def get_people(self):
-        return []
-    
-    def get_ipaddresses(self):
-        return [] 
-
 class Virustotal(EnumratorBaseThreaded):
     def __init__(self, domain, subdomains=None, q=None):
         subdomains = subdomains or []
@@ -606,8 +598,11 @@ class Virustotal(EnumratorBaseThreaded):
             print(e)
             resp = None
         else:
-            return resp.json()
-
+            try:
+                return resp.json()
+            except Exception as e:
+                print('[Virustotal] ERROR {e} status code {s}'.format(e=str(e), s=resp.status_code))
+                
     # once the send_req is rewritten we don't need to call this function, the stock one should be ok
     def enumerate(self):
         url = self.base_url.format(domain=self.domain)
@@ -621,14 +616,14 @@ class Virustotal(EnumratorBaseThreaded):
             for subdomain in subdomains:
                 self.subdomains.append(subdomain.strip())
         except Exception as e:
-            print(e)
-            pass
+            print('[Virustotal] ERROR {e}'.format(e=str(e)))
 
 class CrtSearch(EnumratorBaseThreaded):
     def __init__(self, domain, subdomains=None, q=None):
         subdomains = subdomains or []
         base_url = 'https://crt.sh/?q={domain}'
         self.domain = domain
+        self.parent_domain = domain
         self.queryurl = 'https://crt.sh/?q={0}&output=json'.format(self.domain)
         self.engine_name = "SSL Certificates"
         self.lock = multiprocessing.Lock()
@@ -638,40 +633,42 @@ class CrtSearch(EnumratorBaseThreaded):
 
     def req(self, url):
         try:
+            self.headers["Host"]="crt.sh"
             resp = self.session.get(self.queryurl, headers=self.headers, timeout=self.timeout)
-        except Exception:
+        except Exception as e:
+            print('[CrtSearch] ERROR {e}'.format(e=str(e)))
             resp = None
-
-        return self.get_response(resp)
+        
+        if resp is None:
+            return []
+            
+        if resp.status_code == 403:
+            return []
+            
+        return resp
 
     def enumerate(self):
         url = self.base_url.format(domain=self.domain)
         resp = self.req(url)
+        
         if resp:
             self.extract_domains(resp)
         return self.subdomains
 
     def extract_domains(self, resp):
-        link_regx = re.compile('<TD>(.*?)</TD>')
         try:
-            links = link_regx.findall(resp)
-            for link in links:
-                subdomain = link.strip()
-                
-                #print("SUBDOMAINS ", subdomain)
-                if(self.domain in subdomain and "</A>" not in subdomain):
-                    if not subdomain.endswith(self.domain) or '*' in subdomain:
-                        continue
+            extracted_subdomains = resp.json()
+            for sub in extracted_subdomains:
+                common_name = sub.get("common_name")
+                if not common_name:
+                    pass
+                else:
+                    if self.parent_domain in common_name and self.parent_domain != common_name:
+                        self.subdomains.append(common_name.strip())
 
-                    if '@' in subdomain:
-                        subdomain = subdomain[subdomain.find('@')+1:]
-
-                    if subdomain not in self.subdomains and subdomain != self.domain:
-                        print("{0} : {1}".format(self.engine_name, subdomain))
-                        self.subdomains.append(subdomain.strip())
-                        
+            self.subdomains = list(set(self.subdomains))
         except Exception as e:
-            pass
+            print('[CrtSearch] ERROR {e}'.format(e=str(e)))
 
 class PassiveDNS(EnumratorBaseThreaded):
     def __init__(self, domain, subdomains=None, q=None):
@@ -745,7 +742,6 @@ def main(domain):
                          }
     
     engines = [
-        #BaiduEnum, YahooEnum, GoogleEnum, BingEnum, AskEnum,
         DNSdumpster,NetcraftEnum,  Virustotal, CrtSearch
     ]
 
