@@ -353,3 +353,6 @@ def get_server_type(host):
     except Exception as e:
         return ""
 ```
+
+## Stargazers over time
+[![Stargazers over time](https://starchart.cc/nmmapper/dnsdumpster.svg?variant=adaptive)](https://starchart.cc/nmmapper/dnsdumpster)
